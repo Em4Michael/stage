@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Gradient background */
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #6b7280);
+        }
+
+        /* Card styling */
+        .dashboard-card {
+            background: linear-gradient(145deg, rgba(31, 41, 55, 0.95), rgba(55, 65, 81, 0.95));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Power button styles */
+        .power-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1f2937, #374151);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .power-button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 0;
+        }
+        .power-button.off::before {
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.7) 0%, rgba(239, 68, 68, 0) 70%);
+        }
+        .power-button.on::before {
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.7) 0%, rgba(34, 197, 94, 0) 70%);
+        }
+        .power-button svg {
+            position: relative;
+            z-index: 1;
+            width: 24px;
+            height: 24px;
+            color: #fff;
+        }
+        .power-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        .power-button:active {
+            transform: scale(0.95);
+        }
+        @media (min-width: 640px) {
+            .power-button {
+                width: 60px;
+                height: 60px;
+            }
+            .power-button svg {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* Blink button styles */
+        .blink-button {
+            width: 80px;
+            height: 36px;
+            background: linear-gradient(145deg, #4b5563, #6b7280);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .blink-button.blinking {
+            background: linear-gradient(145deg, #3b82f6, #60a5fa);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .blink-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        .blink-button:active {
+            transform: scale(0.95);
+        }
+        .blink-button svg {
+            width: 20px;
+            height: 20px;
+            color: #fff;
+        }
+        @media (min-width: 640px) {
+            .blink-button {
+                width: 100px;
+                height: 40px;
+            }
+            .blink-button svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* Custom select styling */
+        .custom-select {
+            appearance: none;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 0.75rem center/16px 16px;
+            background-color: #374151;
+        }
+
+        /* Status badge */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        @media (min-width: 640px) {
+            .status-badge {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .dashboard-card {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .control-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .control-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+    <div class="w-full max-w-md sm:max-w-lg md:max-w-3xl dashboard-card p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6 md:mb-8 text-center text-blue-300 tracking-tight">Light Control Dashboard</h1>
+        
+        <!-- Simple Light -->
+        <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Altar Light</h2>
+                <div class="flex items-center justify-center sm:justify-end gap-4 sm:gap-6 control-buttons">
+                    <span id="simple-status" class="status-badge bg-gray-600 text-gray-200">OFF</span>
+                    <div class="flex gap-2 sm:gap-4">
+                        <div class="power-button on" onclick="controlLight('simple', 'on')" aria-label="Turn Simple Light On">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18" />
+                            </svg>
+                        </div>
+                        <div class="power-button off" onclick="controlLight('simple', 'off')" aria-label="Turn Simple Light Off">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2v14h-2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center White Light -->
+        <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Center White Light</h2>
+                <span id="white-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
+            </div>
+            <div class="relative">
+                <select id="white-pattern" onchange="controlLight('white', this.value)" class="custom-select w-full p-2 sm:p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" aria-label="Select White Light Pattern">
+                    <option value="off" selected>On</option>
+                    <option value="on">Off</option>
+                    <option value="blink">Blink</option>
+                </select>
+                <div class="blink-button mt-3 sm:mt-4" id="white-blink" onclick="toggleBlink('white')" aria-label="Toggle White Light Blink">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Warm Light -->
+        <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Side Warm Light</h2>
+                <span id="warm-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
+            </div>
+            <div class="relative">
+                <select id="warm-pattern" onchange="controlLight('warm', this.value)" class="custom-select w-full p-2 sm:p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" aria-label="Select Warm Light Pattern">
+                    <option value="off" selected>On</option>
+                    <option value="on">Off</option>
+                    <option value="blink">Blink</option>
+                </select>
+                <div class="blink-button mt-3 sm:mt-4" id="warm-blink" onclick="toggleBlink('warm')" aria-label="Toggle Warm Light Blink">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- High Beam Light -->
+        <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">High Beam Light</h2>
+                <span id="highbeam-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
+            </div>
+            <div class="relative">
+                <select id="highbeam-pattern" onchange="controlLight('highbeam', this.value)" class="custom-select w-full p-2 sm:p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" aria-label="Select High Beam Light Pattern">
+                    <option value="off" selected>On</option>
+                    <option value="on">Off</option>
+                    <option value="blink">Blink</option>
+                </select>
+                <div class="blink-button mt-3 sm:mt-4" id="highbeam-blink" onclick="toggleBlink('highbeam')" aria-label="Toggle High Beam Light Blink">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="text-center mt-6 sm:mt-8">
+            <span id="connection-status" class="status-badge bg-gray-600 text-gray-200">Connecting...</span>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://192.168.0.4:5000');
+        let whiteBlinkActive = false;
+        let warmBlinkActive = false;
+        let highBeamBlinkActive = false;
+
+        ws.onopen = () => {
+            console.log('Connected to WebSocket server');
+            document.getElementById('connection-status').textContent = 'Connected';
+            document.getElementById('connection-status').classList.remove('bg-gray-600', 'text-gray-200');
+            document.getElementById('connection-status').classList.add('bg-green-600', 'text-white');
+            // Initialize all lights to ON to match hardware state
+            controlLight('simple', 'on');
+            controlLight('white', 'on');
+            controlLight('warm', 'on');
+            controlLight('highbeam', 'on');
+        };
+
+        ws.onmessage = (event) => {
+            console.log('Received:', event.data);
+            try {
+                const data = JSON.parse(event.data);
+                const { light, action } = data;
+                updateStatus(light, action);
+                if (light === 'white' || light === 'warm' || light === 'highbeam') {
+                    if (action === 'blink') {
+                        document.getElementById(`${light}-blink`).classList.add('blinking');
+                        if (light === 'white') whiteBlinkActive = true;
+                        if (light === 'warm') warmBlinkActive = true;
+                        if (light === 'highbeam') highBeamBlinkActive = true;
+                    } else {
+                        document.getElementById(`${light}-blink`).classList.remove('blinking');
+                        if (light === 'white') whiteBlinkActive = false;
+                        if (light === 'warm') warmBlinkActive = false;
+                        if (light === 'highbeam') highBeamBlinkActive = false;
+                    }
+                }
+            } catch (error) {
+                console.error('Error parsing WebSocket message:', error);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+            document.getElementById('connection-status').textContent = 'Disconnected';
+            document.getElementById('connection-status').classList.remove('bg-green-600', 'text-white');
+            document.getElementById('connection-status').classList.add('bg-red-600', 'text-white');
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            document.getElementById('connection-status').textContent = 'Error';
+            document.getElementById('connection-status').classList.remove('bg-green-600', 'text-white');
+            document.getElementById('connection-status').classList.add('bg-red-600', 'text-white');
+        };
+
+        function controlLight(light, action) {
+            const message = JSON.stringify({ light, action });
+            ws.send(message);
+            updateStatus(light, action);
+            if (light === 'white' || light === 'warm' || light === 'highbeam') {
+                if (action !== 'blink') {
+                    document.getElementById(`${light}-blink`).classList.remove('blinking');
+                    if (light === 'white') whiteBlinkActive = false;
+                    if (light === 'warm') warmBlinkActive = false;
+                    if (light === 'highbeam') highBeamBlinkActive = false;
+                }
+            }
+        }
+
+        function toggleBlink(light) {
+            const action = document.getElementById(`${light}-pattern`).value === 'blink' ? 'off' : 'blink';
+            controlLight(light, action);
+            const blinkButton = document.getElementById(`${light}-blink`);
+            blinkButton.classList.toggle('blinking', action === 'blink');
+            if (light === 'white') whiteBlinkActive = action === 'blink';
+            if (light === 'warm') warmBlinkActive = action === 'blink';
+            if (light === 'highbeam') highBeamBlinkActive = action === 'blink';
+        }
+
+        function updateStatus(light, action) {
+            const statusElement = document.getElementById(`${light}-status`);
+            const selectElement = document.getElementById(`${light}-pattern`);
+            const powerButtons = document.querySelectorAll(`.power-button`);
+
+            if (light === 'simple') {
+                // Reverse UI display: show "OFF" when action is "on", and "ON" when action is "off"
+                const displayAction = action === 'on' ? 'OFF' : 'ON';
+                statusElement.textContent = displayAction;
+                statusElement.classList.remove(action === 'on' ? 'bg-green-600' : 'bg-gray-600', 'text-white', 'text-gray-200');
+                statusElement.classList.add(action === 'on' ? 'bg-gray-600' : 'bg-green-600', action === 'on' ? 'text-gray-200' : 'text-white');
+                powerButtons.forEach(button => {
+                    button.classList.remove('on', 'off');
+                    button.classList.add(action === 'on' ? 'off' : 'on');
+                });
+            } else {
+                // Reverse UI display for other lights, except for "blink"
+                let displayAction = action;
+                if (action === 'on') {
+                    displayAction = 'Off';
+                } else if (action === 'off') {
+                    displayAction = 'On';
+                }
+                statusElement.textContent = displayAction.charAt(0).toUpperCase() + displayAction.slice(1);
+                statusElement.classList.remove(action === 'off' ? 'bg-gray-600' : 'bg-green-600', 'text-gray-200', 'text-white');
+                statusElement.classList.add(action === 'off' ? 'bg-green-600' : action === 'on' ? 'bg-gray-600' : 'bg-green-600', action === 'off' ? 'text-white' : 'text-gray-200');
+                selectElement.value = action;
+            }
+        }
+    </script>
+</body>
+</html>

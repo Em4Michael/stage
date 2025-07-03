@@ -1,0 +1,20 @@
+{
+  "name": "stage",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "save": "^2.9.0",
+    "ws": "^8.18.3"
+  }
+}
