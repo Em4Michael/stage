@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(cors({
-    origin: process.env.ALLOWED_ORIGINS.split(','),
+    origin: '*',
     methods: ['GET'],
     credentials: true
 }));
