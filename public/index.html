@@ -190,7 +190,7 @@
         <!-- Center White Light -->
         <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Center White Light</h2>
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Warm Light</h2>
                 <span id="white-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
             </div>
             <div class="relative">
@@ -210,7 +210,7 @@
         <!-- Center Warm Light -->
         <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Side Warm Light</h2>
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">White Light</h2>
                 <span id="warm-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
             </div>
             <div class="relative">
@@ -230,7 +230,7 @@
         <!-- High Beam Light -->
         <div class="mb-4 sm:mb-6 p-4 sm:p-6 bg-gray-900/50 rounded-xl border border-gray-700/50 control-section">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">High Beam Light</h2>
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-white">Beam Light</h2>
                 <span id="highbeam-status" class="status-badge bg-gray-600 text-gray-200">Off</span>
             </div>
             <div class="relative">
@@ -265,10 +265,10 @@
             document.getElementById('connection-status').classList.remove('bg-gray-600', 'text-gray-200');
             document.getElementById('connection-status').classList.add('bg-green-600', 'text-white');
             // Initialize all lights to ON to match hardware state
-            controlLight('simple', 'on');
-            controlLight('white', 'on');
-            controlLight('warm', 'on');
-            controlLight('highbeam', 'on');
+            controlLight('simple', 'off');
+            controlLight('white', 'off');
+            controlLight('warm', 'off');
+            controlLight('highbeam', 'off');
         };
 
         ws.onmessage = (event) => {
